@@ -9,7 +9,15 @@ function App() {
 
   const [images, setImages] = useState<imgObjInterface[]>([]);
 
-  useEffect( () => console.log(images), [images]);
+  const getImagesReload = (): void => {
+    if(localStorage.length > 0) {
+      const imagesArrayString = localStorage.getItem("imagesData")!;
+      const imagesArray: imgObjInterface[] = JSON.parse(imagesArrayString);
+      setImages(imagesArray);
+    }
+    return;
+  }
+  useEffect(getImagesReload, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement, Element>) => {
     const input = e.target;
@@ -33,6 +41,15 @@ function App() {
       return toast.error("Please select image file");
     }
   }
+
+  const setLocalStorage = (): void => {
+    if(images.length !== 0) {
+      localStorage.setItem("imagesData", JSON.stringify(images));
+      return;
+    }
+    return localStorage.removeItem("imagesData");
+  }
+  useEffect(setLocalStorage, [images]);
 
   const imageDownload = (itemObj: imgObjInterface): void => {
         const a = document.createElement("a");
